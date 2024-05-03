@@ -21,7 +21,7 @@ run_start_time=$(date +%s.%N)
 
 # Execute run.sh if found
 chmod +x run.sh
-sudo ./run.sh
+sudo bash run.sh
 # Calculate the elapsed time after creating the checkpoint
 run_end_time=$(date +%s.%N)
 run_time=$(echo "$run_end_time - $run_start_time"| bc) 
@@ -38,12 +38,14 @@ done
 start_time=$(date +%s.%N)
 
 # Execute restore.sh if found
+sleep 1
 chmod +x restore.sh
-sudo ./restore.sh
+sudo bash restore.sh
 
 # Calculate the elapsed time after creating the checkpoint
 end_time=$(date +%s.%N)
 migration_time=$(echo "$end_time - $start_time"| bc) 
 
-echo -e "run.sh time: $run_time seconds"
+#echo -e "run.sh time: $run_time seconds"
 echo -e "Migration time2: $migration_time seconds"
+rm -rf run.sh restore.sh processes.sh
