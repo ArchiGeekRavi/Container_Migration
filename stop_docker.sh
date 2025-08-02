@@ -1,4 +1,7 @@
-rm -rf run.sh restore.sh processes.sh 
-sudo docker stop final
-sudo docker rm final
-sudo rm -rf checkpoint_f
+dockerName=$1
+checkpointDirName=$2
+
+# rm -rf run.sh restore.sh processes.sh 
+sudo docker stop $dockerName
+sudo docker rm $dockerName
+sudo rm -rf checkpointDirName

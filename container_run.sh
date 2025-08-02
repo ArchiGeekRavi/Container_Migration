@@ -5,8 +5,9 @@
 # $2 is the checkpoint directory name
 
 #set the destination IP and port of the vm 
-DestHostIP=10.96.11.198
-DestVMPort=2222
+DestHostIP=$3
+DestVMPort=$4
+DestHostUser=$5
 
 # Define the commands
 #command1="sudo docker run --security-opt=seccomp:unconfined --name $1 -d alpine:3.18 /bin/sh -c 'i=0; while true; do echo \$i; i=\$(expr \$i + 1); sleep 1; done'"
@@ -24,8 +25,8 @@ sed -i "s/\[container_name\]/$1/g" run.sh
 
 
 #Send the run.sh script to Destination to start docker
-#scp -r run.sh "vedant@$DestHostIP:~/"
-scp -r -P $DestVMPort run.sh processes.sh "vedant@$DestHostIP:~/"
+#scp -r run.sh "$DestHostUser@$DestHostIP:~/"
+scp -r -P $DestVMPort run.sh processes.sh "$DestHostUser@$DestHostIP:~/"
 
 # Wait for a moment to ensure the container is running
 sleep 10
@@ -43,23 +44,19 @@ function ctrl_c() {
 }
 
 
-#Send the run.sh script to Destination to start docker
-#scp -r run.sh "vedant@$DestHostIP:~/"
-#scp -r -P $DestVMPort run.sh "vedant@$DestHostIP:~/"
-
 # Start time before creating the checkpoint
 migrate_start_time=$(date +%s.%N)
 
 #Create checkpoint
-sudo docker checkpoint create --checkpoint-dir=/home/ravi --leave-running=false $1 $2
+mkdir ckpts
+sudo docker checkpoint create --checkpoint-dir=/~/ckpts --leave-running=false $1 $2
 echo -e "Checkpoint created!"
 
 # Start time before creating the checkpoint
 down_start_time=$(date +%s.%N)
 
 #send the checkpoint directory to the destination
-#sudo scp -r "/home/ravi/$2" "vedant@$DestHostIP:~/"
-sudo scp -P $DestVMPort -r "/home/ravi/$2" "vedant@$DestHostIP:~/"
+sudo scp -P $DestVMPort -r "~/ckpts/$2" "$DestHostUser@$DestHostIP:~/"
 echo -e "Checkpoint transferred successfully..."
 
 # Replace [container_name] with the value of $1 in restore.sh
@@ -68,8 +65,7 @@ sed -i "s/\[container_name\]/$1/g" restore.sh
 sed -i "s/\[checkpoint_dir\]/$2/g" restore.sh
 
 #send the restore script to Destination
-#sudo scp -r restore.sh "vedant@$DestHostIP:~/"
-sudo scp -r -P $DestVMPort restore.sh "vedant@$DestHostIP:~/"
+sudo scp -r -P $DestVMPort restore.sh "$DestHostUser@$DestHostIP:~/"
 
 # Calculate the elapsed time after creating the checkpoint
 end_time=$(date +%s.%N)
@@ -92,4 +88,3 @@ sed -i "s/$1/\[container_name\]/g" restore.sh
 
 #sudo docker stop $1
 sudo docker rm $1
-#sudo rm -rf /home/ravi/$2

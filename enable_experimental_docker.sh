@@ -14,9 +14,9 @@ echo '}' >> /etc/docker/daemon.json
 echo "Changes applied to daemon.json"
 
 # Restart Docker daemon
-poweroff
+# poweroff
 
-#echo "Restarting Docker daemon..."
-#sudo systemctl restart docker
+echo "Restarting Docker daemon..."
+sudo systemctl restart docker
 
-#echo "Docker daemon restarted"
+echo "Docker daemon restarted"
