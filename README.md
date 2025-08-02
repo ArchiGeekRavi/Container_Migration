@@ -62,7 +62,7 @@ This script:
 ./container_run.sh <container_name> <checkpoint_directory>
 
 # Restore on same machine but dest Container
-./container_receive.sh <checkpoint_directory>
+./container_receive.sh 
 ```
 
 ### Inter-device Migration (Cross-machine)
@@ -83,20 +83,6 @@ This script:
 - `$3`: Destination host IP address (for inter-device migration)
 - `$4`: Destination VM/host port
 - `$5`: Destination host username
-
-#### `container_receive.sh`
-- `$1`: Checkpoint directory containing the migration data
-
-##  Project Structure
-
-```
-docker-migration/
-├── install_docker_17.04.0.sh    # Installation script for Docker and dependencies
-├── enable_experimental_docker.sh # Docker daemon configuration for CRIU
-├── container_run.sh              # Source-side migration script
-├── container_receive.sh          # Destination-side restoration script
-└── README.md                     # This file
-```
 
 ##  Authors
 
